@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<!--[if IE 6]>
+<html id="ie6" dir="ltr" lang="en-US">
+<![endif]-->
+<!--[if IE 7]>
+<html id="ie7" dir="ltr" lang="en-US">
+<![endif]-->
+<!--[if IE 8]>
+<html id="ie8" dir="ltr" lang="en-US">
+<![endif]-->
+<!--[if !(IE 6) | !(IE 7) | !(IE 8)  ]><!-->
+<html dir="ltr" lang="en-US">
+<!--<![endif]-->
+
+<head>
+<meta charset="UTF-8" />
+
+<title>The purpose of BibJSON</title>
+
+<!--[if lt IE 9]>
+<script src="http://creation.cottagelabs.com/wp-content/themes/twentyeleven_creation/js/html5.js" type="text/javascript"></script>
+<![endif]-->
+
+<link href='http://fonts.googleapis.com/css?family=Fredericka+the+Great|Frijole|Duru+Sans' rel='stylesheet' type='text/css'>
+
+<link rel="stylesheet" href="bootstrap.min.css">
+
+<style type="text/css">
+html,body{
+    background:#333;
+    font-family:'Duru Sans', sans-serif;
+}
+h1{
+    font-family:'Fredericka the Great', cursive;
+}
+h2{
+    text-shadow: 0px 1px 1px #000;
+    color:#666;
+}
+.row{
+    padding-top:30px;
+}
+p,ul li{
+    color:#f5f5f5;
+}
+.footer{
+    border-top:1px solid #666;
+    padding-bottom:40px;
+}
+.footer ul li{
+    color:#666;
+}
+a{
+    color:#33ccff;
+}
+a:hover{
+    color:#3366ff;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="topbar">
+    <div class="fill">
+        <div class="container">
+            <ul class="nav">
+                <li><a href="#purpose">purpose</a></li>
+                <li><a href="#overview">overview</a></li>
+                <li><a href="#objects">objects</a></li>
+                <li><a href="#links-identifiers">links/identifiers</a></li>
+                <li><a href="#license">license</a></li>
+                <li><a href="#collection">collection</a></li>
+		<li><a href="#linked-data">linked data</a></li>
+                <li><a href="#parsing">parsing</a></li>
+                <li><a href="#feedback">feedback</a></li>
+            </ul>
+            <a class="nav-logo pull-right" href="http://okfn.org/" title="An Open Knowledge Foundation Project">
+                <img src="http://assets.okfn.org/p/okfn/img/logo_28x30.png" alt="Open Knowledge Foundation logo" />
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="content">
+
+        <div class="page-header">
+        </div>
+
+        <div class="row">
+            <div class="hero-unit">
+                <h1>HOW TO DO BIBJSON</h1>
+                <h4>It's just JSON... only, with some useful conventions.</h4>
+            </div>
+        </div>
+
+        <a name="purpose"></a>
+
+        <div class="row">
+            <div class="span7">
+                <h2>The purpose of BibJSON</h2>
+                <p>BibJSON is a convention for representing bibliographic metadata in JSON; 
+                it makes it easy to <strong>share</strong> and <strong>use</strong> bibliographic metadata online.</p>
+                <p>It is a form of <a href="http://www.json.org/">JSON</a> - a simple, useful and common way of representing data on the web; we use it to 
+                shift information around between our apps.</p>
+                <p>When we want to share with other people, 
+                having some conventions about how to use the JSON to do so can be a very useful thing.</p>
+                <p>By sharing BibJSON in an agreed manner, we can share data online and use it
+                directly in web applications to quickly and easily make better use of our data.</p>
+                <p>BibJSON is designed to be <strong>simple</strong> and <strong>useful</strong> above all else.
+                It has virtually no requirements, and you could use your own namespaces to extend it. 
+                Use it as best fits the purpose of your community.</p>
+            </div>
+            <div class="span9">
+                <pre>
+{
+    "title": "Open Bibliography for Science, Technology and Medicine",
+    "author":[
+        {"name": "Richard Jones"},
+        {"name": "Mark MacGillivray"},
+        {"name": "Peter Murray-Rust"},
+        {"name": "Jim Pitman"},
+        {"name": "Peter Sefton"},
+        {"name": "Ben O'Steen"},
+        {"name": "William Waites"}
+    ],
+    "type": "article",
+    "year": "2011",
+    "journal": {"name": "Journal of Cheminformatics"},
+    "link": [{"url":"http://www.jcheminf.com/content/3/1/47"}],
+    "identifier": [{"type":"doi","id":"10.1186/1758-2946-3-47"}]
+}
+                </pre>
+            </div>
+        </div>
+
+        <a name="overview"></a>
+
+        <div class="row">
+            <div class="span8">
+                <h2>Overview</h2>
+                <ul>
+                <li>A BibJSON record is a JSON object</li>
+                <li>A BibJSON collection is a JSON object containing "metadata" followed by "records"</li>
+                <li>The "records" key in a collection points to a list of BibJSON records (JSON objects)</li>
+                <li>The collection and the records both have the "collection" key, and their value should be the same</li>
+                <li>Each record should have a "cid" - an identifier unique within the parent collection</li>
+                <li>Each record should have a "type" - such as "article", "book", or even "author"</li>
+                <li>Record type places no constraint on what can be placed in the record</li>
+                <li>The default set of keys are based on the  
+                <a href="http://en.wikipedia.org/wiki/BibTeX">bibtex keys</a></li>
+                <li>BibJSON keys are lowercase, no spaces, and usually singular</li>
+                <li>The keys can point to strings, lists, or objects</li>
+                <li>Any thing that is a simple string should remain so</li>
+                <li>Where object complexity is required, make it an object</li>
+                <li>Where additional keys are namespaced, include a "namespace" declaration in the collection "metadata"</li>
+                <li>BibJSON APIs may return other metadata relevant to the parent app; developers can identify such metadata by prefixing the key with "_"; just ignore what is not useful to you</li>
+                </ul>
+            </div>
+            <div class="span8">
+                <pre>
+# Any simple string is just a string, e.g. 
+"year":"2011"
+
+# Anything more complex is an object, such as 
+"journal":{
+    "name": "A really great journal",
+    "id": "rgjourn"
+}
+
+# Anything that could have multiples goes in a list - 
+"author":[
+    {
+        "name": "MacGillivray, Mark"
+    },
+    {
+        "name": "Pitman, Jim"
+    },
+    "lists can contain string, list, and object children"
+]
+                </pre>
+            </div>
+        </div>
+
+        <a name="objects"></a>
+
+        <div class="row">
+            <div class="span8">
+            <h2>Which things are objects</h2>
+            <p>As mentioned in the overview, when something is simple it can just be 
+            a string pointed at by a suitable key; but otherwise, it needs to be an 
+            object. So which things are objects?</p>
+            </div>
+            <div class="span8">
+                <ul>
+                <li>author is a list of objects</li>
+                <li>editor is a list of objects</li>
+                <li>license is a list of objects</li>
+                <li>identifier is a list of objects</li>
+                <li>link is a list of objects</li>
+                <li>journal is an object</li>
+                </ul>
+            </div>
+        </div>
+
+        <a name="links-identifiers"></a>
+
+        <div class="row">
+            <div class="span8">
+                <h2>Web links and identifying things</h2>
+                <p>Web links are objects in a list and can contain a URL, an anchor, and more.
+                They should go to relevant stuff about the current record.<br />
+                Identifiers should identify the thing the current record is about. They 
+                must have an ID and a type, and can have more.</p>
+                <pre>
+{
+    "title": "An example of links",
+    "link": [
+        {
+            "url": "http://bibsoup.net",
+            "anchor": "Go to BibSoup"
+        }
+    ]
+    "identifier": [
+        {
+            "id": "10.1186/1758-2946-3-47",
+            "type": "DOI",
+            "url": "http://dx.doi.org/10.1186/1758-2946-3-47"
+        }
+    ]
+}
+                </pre>
+            </div>
+            <div class="span8">
+                <h2>author, editor, journal</h2>
+                <p>Some typical keys for these objects</p>
+                <pre>
+{
+    "author": [
+        {
+            "name": "Erdös, Paul",
+            "alternate": ["Paul Erdos"],
+            "firstname": "Paul",
+            "lastname": "Erdös",
+            "id": "paulerdos"
+        }
+    ],
+    "editor": [
+        # as above...
+    ],
+    "journal": {
+        "name": "American Journal of Mathematics",
+        "shortcode": "Amer. J. Math.",
+        "id": "amerjmath"
+    }
+                </pre>
+                <p>You could even have these as separate records in a collection, 
+                (use the "type" field to identify "author", say)  
+                then refer to them from other objects by their ID.</p>
+            </div>
+        </div>
+
+        <a name="license"></a>
+        
+        <div class="row">
+            <div class="span8">
+                <h2>Licensing things</h2>
+                <p>License information is represented by the "license" key. It should 
+                contain a type and a URL to an explanation of the license. It could 
+                also contain other fields giving more info about the license, 
+                if necessary. License is a list, just in case there are multiples...</p>
+                <p>(We have chosen to Americanise ourselves and use "license" :)</p>
+                <p>Learn more about bibliographic metadata licensing at 
+                <a href="http://openbiblio.net/principles">http://openbiblio.net/principles</a></p>
+            </div>
+            <div class="span8">
+                <pre>
+{
+    "license": [
+        {
+            "type": "copyheart",
+            "url": "http://copyheart.org/manifesto/",
+            "description": "A great license",
+            "jurisdiction": "universal"
+        }
+    ]
+}
+                </pre>
+            </div>
+        </div>
+
+        <a name="collection"></a>
+
+        <div class="row">
+            <div class="span8">
+                <h2>collection</h2>
+                <pre>
+# an example collection
+{
+    "metadata": {
+        "collection": "my_collection",
+        "label": "My collection of records",
+        "description" "a great collection",
+        "id": "long_complex_uuid",
+        "owner": "test",
+        "created": "2011-10-31T16:05:23.055882",
+        "modified": "2011-10-31T16:05:23.055882",
+        "source": "http://webaddress.com/collection.bib",
+        "records": 1594,
+        "from": 0,
+        "size": 2,
+    },
+    "records": [
+        {
+            "collection": "my_collection",
+            "type": "book",
+            "title": "a great book",
+	    "id": "your_record_id",
+            ...
+        },
+        ...
+    ]
+}
+                </pre>
+		<p>NOTE: You can provide your own record IDs in the "id" key. Internal IDs allocated 
+		by BibServer (and other internal data set by BibServer or other processes) are 
+		set to keys prefixed with "_" - e.g. "_id" is used for internal BibServer IDs. 
+		(BibServer also exposes records via the provided as well as the internal ID.)</p> 
+            </div>
+            <div class="span8">
+                <h2>Another example</h2>
+                <pre>
+{
+    "type": "article",
+    "title": "On a family of symmetric Bernoulli convolutions",
+    "author": [
+        {
+            "name": "Erdös, Paul"
+        }
+    ],
+    "journal": {
+        "name": "American Journal of Mathematics"
+        "identifier":[
+            {
+                "id": "0002-9327",
+                "type": "issn"
+            }
+        ],
+        "volume": "61",
+        "pages": "974--976"
+    },
+    "year": "1939",
+    "owner": "me",
+    "id": "ID_1",
+    "collection": "my_collection",
+    "url": "http://bibsoup.net/me/my_collection/ID_1",
+    "link":[
+        {
+            "url": "http://cottagelabs.com",
+            "anchor": "Cottage Labs"
+        }
+    ]
+}
+                </pre>
+            </div>
+        </div>
+
+	<a name="linked-data"></a>
+
+	<div class="row">
+	    <div class="span8">
+		<h2>Linked data</h2>
+		<p>Rather than re-defining our own methods for representing linked data, 
+		we have adopted the JSON-LD linked data specification. This enables representation
+		of your data in a BibJSON collection whilst also taking advantage of the power of 
+		linked data where necessary, without making the basics of BibJSON overly complex
+		for those that do not require it. So in order to represent your data as linked data, 
+		just incorporate the <a href="http://json-ld.org">JSON-LD</a> linked data 
+		specifications when creating your BibJSON collection.</p>
+	    </div>
+	    <div class="span8">
+		<h2>JSON-LD example</h2>
+		<p>We would like to use real world examples as far as possible - do you require 
+		linked data functionality within BibJSON? If so, please 
+		<a href="mailto:openbiblio-dev@lists.okfn.org">contact us</a> 
+		and we can work through a BibJSON / JSON-LD example with you.</p>
+	    </div>
+	</div>
+
+        <a name="parsing"></a>
+
+        <div class="row">
+            <div class="span8">
+                <h2>Parsing to BibJSON</h2>
+                <p>We have written parsers to BibJSON from a number of popular formats such as bibtex, 
+		CSV, RIS, MARC - and we have written BibServer to be easily extensible with additional 
+		parsers written in multiple programming languages.  If we do not yet have the parser 
+		you require in our repo, get in touch and we will help you write one.</p>
+                <p>The parsers are accessible via an API call at 
+                <a href="http://bibsoup.net/parse">http://bibsoup.net/parse</a>, so you can send a 
+                source URL to it and get it back as BibJSON.</p>
+                <p>The parse functionality can be run independently from the core of BibServer,so 
+		it is possible to create and expose your own parsers if you wish.</p>
+            </div>
+            <div class="span8">
+                <h2>Schema</h2>
+                <p>BibJSON is intended to be simple yet useful, and should be used
+                as is most practical. There is no fixed schema as yet, but as JSON-LD is supported 
+		it is possible to reference any vocabulary via a namespace declaration and use it 
+		with your key/value pairs where necessary.</p>
+                <p>Development is managed via our <a href="mailto:openbiblio-dev@lists.oknf.org">mailing list</a>
+		the Open biblio WG blog at <a href="http://openbiblio.net">http://openbiblio.net</a>, 
+                and  the wiki at <a href="http://wiki.okfn.org/Projects/openbibliography/bibjson">http://wiki.okfn.org/Projects/openbibliography/bibjson</a>.</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="span8">
+                <h2>Why use / who uses BibJSON</h2>
+                <p>You can see lots of examples at <a href="http://bibsoup.net">http://bibsoup.net</a>.
+                Just add .json to the URL or &format=json to 
+                the parameters (or send a GET request with proper "accept" JSON headers). Try viewing in <a href="">Firefox</a> using 
+                <a href="https://addons.mozilla.org/en-US/firefox/addon/jsonview/">JSONview</a>.</p>
+                <p>BibJSON data can be very easily displayed, searched, 
+                embedded, merged and shared on the internet via BibServer and similar tools. With that comes the ability to use 
+		your bibliographic metadata directly in online documents to manage, share and link your reference lists - not just 
+		maintaining your collection for use in static documents, but using your collections as part of the </p>
+                <p><a href="mailto:openbiblio-dev@lists.okfn.org">Let us know</a> if you are using or considering using BibJSON for your own project.  
+                It becomes more useful as more people use it.</p>
+            </div>
+            <div class="span8">
+                <h2>Anything similar? <small>(why not use them?)</small></h2>
+                <p>The concept of BibJSON is like that of <a href="http://geojson.org/">GeoJSON</a>.</p>
+                <p>There are various other ways to represent your data and share it with other people. 
+                We have designed BibJSON around 
+                some key requirements - to be useful on the web, to remain simple, 
+                and to present consensus on usage.</p>
+                <p>We think that the power of linked data is good where necessary, and we support that via 
+		our adoption of JSON-LD. We prefer it over others such as RDF/JSON as it enables us to 
+		maintain a simple key/value structure where appropriate.</p>
+            </div>
+        </div>
+
+        <a name="feedback"></a>
+
+        <div class="row">
+            <div class="span16">
+                <h2>What do you think?</h2>
+                <p>We would like to know what you think about BibJSON. We would like to find out where it actually is useful for other people.</p>
+                <p>The best place to get in touch is on our mailing list <a href="mailto:openbiblio-dev@lists.okfn.org">openbiblio-dev@lists.okfn.org</a>.</p>
+                <p>It would be great to hear back about any potential uses of BibJSON, or any interest in converting records or collections, or in writing parsers 
+                to do so. Also, any follow up comments about the conventions described here, or suggestions for additions / changes, should be presented 
+                to the mailing list for consideration.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="span8">
+                    <p>Written by Mark MacGillivray and Jim Pitman, <a href="http://creativecommons.org/licenses/by/3.0/">CC-BY</a></p>
+                    <p>BibJSON was initially developed for the Bibliographic Knowledge Network (BKN) project directed by
+                    <a href="http://www.stat.berkeley.edu/~pitman/">Jim Pitman</a>, and supported by U.S. National Science Foundation Awards 0835773 and 0835463.
+                    Any opinions, findings, and conclusions or recommendations expressed in this material are those of the authors of this document and do 
+                    not necessarily reflect the views of the National Science Foundation.</p>
+                </div>
+                <div class="span8">
+                    <ul>
+                    <li>Contact us at <a href="mailto:openbiblio-dev@lists.okfn.org">openbiblio-dev@lists.okfn.org</a></li>
+                    <li>An <a href="http://okfn.org">OKF</a> 
+                            <a href="http://openbiblio.net">Open Biblio Working Group</a> project</li>
+                    <li>With support from <a href="http://jisc.ac.uk">JISC</a> via the <a href="http://openbiblio.net/p/jiscopenbib2">Open Biblio 2</a> project</li>
+                    <li>As used in <a href="http://github.com/okfn/bibserver">BibServer</a> and as featured in <a href="http://bibsoup.net">BibSoup</a></li>
+                    <li>Read <a href="http://www.jcheminf.com/content/3/1/47">Open Bibliography for STM</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</div>
+
+</body>
+
+</html>
